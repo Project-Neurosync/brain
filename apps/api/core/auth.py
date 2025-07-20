@@ -9,13 +9,17 @@ import jwt
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 import secrets
+import uuid
+from sqlalchemy.orm import Session
+from models.database import User
+from services.database_service import DatabaseService
 
 class AuthManager:
     """
     Manages authentication, authorization, and user sessions.
     """
     
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None, db_service: Optional[DatabaseService] = None):
         """Initialize the Auth Manager."""
         self.config = config or {}
         self.logger = logging.getLogger(__name__)
@@ -24,10 +28,9 @@ class AuthManager:
         self.algorithm = "HS256"
         self.access_token_expire_minutes = 30
         self.refresh_token_expire_days = 7
+        self.db_service = db_service
         
-        # In-memory storage (replace with database in production)
-        self.users = {}
-        self.user_projects = {}
+        # In-memory storage for refresh tokens only
         self.refresh_tokens = {}
     
     def hash_password(self, password: str) -> str:
@@ -84,17 +87,21 @@ class AuthManager:
             if user_id is None or token_type != "access":
                 raise Exception("Invalid token")
             
-            # Get user info
-            user = self.users.get(user_id)
-            if not user:
-                raise Exception("User not found")
+            # Get user info from database
+            if not self.db_service:
+                raise Exception("Database service not available")
             
-            return {
-                "user_id": user_id,
-                "email": user["email"],
-                "subscription_tier": user.get("subscription_tier", "starter"),
-                "is_active": user.get("is_active", True)
-            }
+            with self.db_service.get_db_session() as db:
+                user = db.query(User).filter(User.id == user_id).first()
+                if not user:
+                    raise Exception("User not found")
+                
+                return {
+                    "user_id": str(user.id),
+                    "email": user.email,
+                    "subscription_tier": user.subscription_tier,
+                    "is_active": user.is_active
+                }
             
         except jwt.ExpiredSignatureError:
             raise Exception("Token has expired")
@@ -105,6 +112,7 @@ class AuthManager:
         self,
         email: str,
         password: str,
+        name: str = None,
         subscription_tier: str = "starter",
         metadata: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
@@ -120,43 +128,51 @@ class AuthManager:
         Returns:
             User information and tokens
         """
-        # Check if user already exists
-        for user_id, user in self.users.items():
-            if user["email"] == email:
+        if not self.db_service:
+            raise Exception("Database service not available")
+        
+        # Get database session
+        with self.db_service.get_db_session() as db:
+            # Check if user already exists
+            existing_user = db.query(User).filter(User.email == email).first()
+            if existing_user:
                 raise Exception("User already exists")
-        
-        # Create new user
-        import uuid
-        user_id = str(uuid.uuid4())
-        hashed_password = self.hash_password(password)
-        
-        user_data = {
-            "id": user_id,
-            "email": email,
-            "password_hash": hashed_password,
-            "subscription_tier": subscription_tier,
-            "is_active": True,
-            "created_at": datetime.utcnow(),
-            "metadata": metadata or {}
-        }
-        
-        self.users[user_id] = user_data
-        self.user_projects[user_id] = []
-        
-        # Create tokens
-        access_token = self.create_access_token({"sub": user_id})
-        refresh_token = self.create_refresh_token(user_id)
-        
-        self.logger.info(f"Registered new user: {email}")
-        
-        return {
-            "user_id": user_id,
-            "email": email,
-            "subscription_tier": subscription_tier,
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "token_type": "bearer"
-        }
+            
+            # Create new user
+            user_id = uuid.uuid4()
+            hashed_password = self.hash_password(password)
+            
+            new_user = User(
+                id=user_id,
+                email=email,
+                name=name or email.split('@')[0],  # Use email prefix if no name provided
+                auth_provider='local',
+                auth_provider_id=email,  # Use email as provider ID for local auth
+                password_hash=hashed_password,
+                subscription_tier=subscription_tier,
+                is_active=True,
+                user_metadata=metadata or {}
+            )
+            
+            # Save to database
+            db.add(new_user)
+            db.commit()
+            db.refresh(new_user)
+            
+            # Create tokens
+            access_token = self.create_access_token({"sub": str(user_id)})
+            refresh_token = self.create_refresh_token(str(user_id))
+            
+            self.logger.info(f"Registered new user: {email} with ID: {user_id}")
+            
+            return {
+                "user_id": str(user_id),
+                "email": email,
+                "subscription_tier": subscription_tier,
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "token_type": "bearer"
+            }
     
     async def authenticate_user(self, email: str, password: str) -> Dict[str, Any]:
         """
@@ -169,33 +185,34 @@ class AuthManager:
         Returns:
             User information and tokens
         """
-        # Find user by email
-        user = None
-        user_id = None
-        for uid, u in self.users.items():
-            if u["email"] == email:
-                user = u
-                user_id = uid
-                break
+        if not self.db_service:
+            raise Exception("Database service not available")
         
-        if not user or not self.verify_password(password, user["password_hash"]):
-            raise Exception("Invalid credentials")
-        
-        if not user.get("is_active", True):
-            raise Exception("Account is disabled")
-        
-        # Create tokens
-        access_token = self.create_access_token({"sub": user_id})
-        refresh_token = self.create_refresh_token(user_id)
-        
-        return {
-            "user_id": user_id,
-            "email": user["email"],
-            "subscription_tier": user.get("subscription_tier", "starter"),
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "token_type": "bearer"
-        }
+        # Get database session
+        with self.db_service.get_db_session() as db:
+            # Find user by email
+            user = db.query(User).filter(User.email == email).first()
+            
+            if not user or not self.verify_password(password, user.password_hash):
+                raise Exception("Invalid credentials")
+            
+            if not user.is_active:
+                raise Exception("Account is disabled")
+            
+            # Create tokens
+            access_token = self.create_access_token({"sub": str(user.id)})
+            refresh_token = self.create_refresh_token(str(user.id))
+            
+            self.logger.info(f"User authenticated: {email}")
+            
+            return {
+                "user_id": str(user.id),
+                "email": user.email,
+                "subscription_tier": user.subscription_tier,
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "token_type": "bearer"
+            }
     
     async def refresh_access_token(self, refresh_token: str) -> Dict[str, Any]:
         """
@@ -280,16 +297,19 @@ class AuthManager:
         Returns:
             User profile data
         """
-        user = self.users.get(user_id)
-        if not user:
-            raise Exception("User not found")
+        if not self.db_service:
+            raise Exception("Database service not available")
         
-        return {
-            "user_id": user_id,
-            "email": user["email"],
-            "subscription_tier": user.get("subscription_tier", "starter"),
-            "is_active": user.get("is_active", True),
-            "created_at": user["created_at"],
-            "projects": self.user_projects.get(user_id, []),
-            "metadata": user.get("metadata", {})
-        }
+        with self.db_service.get_db_session() as db:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                raise Exception("User not found")
+            
+            return {
+                "user_id": str(user.id),
+                "email": user.email,
+                "subscription_tier": user.subscription_tier,
+                "is_active": user.is_active,
+                "created_at": user.created_at,
+                "metadata": user.metadata or {}
+            }

@@ -10,8 +10,8 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
 from contextlib import contextmanager
 
-from ..config.settings import get_settings
-from ..models.database import Base
+from config.settings import get_settings
+from models.database import Base
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +28,6 @@ class DatabaseManager:
         """Initialize database engine and session factory"""
         # Create engine with appropriate settings
         engine_kwargs = {
-            "pool_size": self.settings.database_pool_size,
-            "max_overflow": self.settings.database_max_overflow,
             "echo": self.settings.database_echo,
         }
         
@@ -38,6 +36,12 @@ class DatabaseManager:
             engine_kwargs.update({
                 "poolclass": StaticPool,
                 "connect_args": {"check_same_thread": False}
+            })
+        else:
+            # PostgreSQL and other databases support connection pooling
+            engine_kwargs.update({
+                "pool_size": self.settings.database_pool_size,
+                "max_overflow": self.settings.database_max_overflow,
             })
         
         self.engine = create_engine(
@@ -90,18 +94,27 @@ class DatabaseManager:
             logger.error(f"Error creating database tables: {str(e)}")
             raise
     
+    @contextmanager
+    def get_session(self):
+        """Get database session with automatic cleanup"""
+        session = self.SessionLocal()
+        try:
+            yield session
+        except Exception as e:
+            session.rollback()
+            logger.error(f"Database session error: {str(e)}")
+            raise
+        finally:
+            session.close()
+    
     def drop_tables(self):
         """Drop all database tables (use with caution!)"""
         try:
             Base.metadata.drop_all(bind=self.engine)
-            logger.warning("All database tables dropped")
+            logger.info("Database tables dropped successfully")
         except Exception as e:
             logger.error(f"Error dropping database tables: {str(e)}")
             raise
-    
-    def get_session(self) -> Session:
-        """Get a new database session"""
-        return self.SessionLocal()
     
     @contextmanager
     def get_session_context(self) -> Generator[Session, None, None]:

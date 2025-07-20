@@ -28,6 +28,7 @@ class UserRegistrationRequest(BaseModel):
     """User registration request."""
     email: EmailStr
     password: str = Field(..., min_length=8)
+    name: Optional[str] = Field(None, description="User's full name")
     subscription_tier: SubscriptionTier = SubscriptionTier.STARTER
     metadata: Optional[Dict[str, Any]] = None
 

@@ -4,9 +4,9 @@ Centralized configuration management using Pydantic settings
 """
 
 import os
-from typing import Optional, List
-from pydantic import Field
-from pydantic_settings import BaseSettings
+from typing import Optional, List, Union
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 class Settings(BaseSettings):
@@ -28,18 +28,49 @@ class Settings(BaseSettings):
     secret_key: str = Field(default="dev-secret-key-change-in-production", description="Secret key for JWT and encryption")
     jwt_algorithm: str = Field(default="HS256", description="JWT algorithm")
     jwt_expiration_hours: int = Field(default=24, description="JWT token expiration in hours")
-    cors_origins: List[str] = Field(default=["*"], description="CORS allowed origins")
+    cors_origins: Union[str, List[str]] = Field(default="*", description="CORS allowed origins")
+    
+    # Admin access tokens (comma-separated list)
+    admin_tokens: str = Field(default="admin-dev-token-123,founder-access-456", description="Admin access tokens for dashboard")
+    
+    @field_validator('cors_origins')
+    @classmethod
+    def parse_cors_origins(cls, v):
+        if isinstance(v, str):
+            if ',' in v:
+                return [origin.strip() for origin in v.split(',')]
+            return [v.strip()]
+        return v
     
     # Database settings
-    database_url: str = Field(default="sqlite:///./neurosync.db", description="Database connection URL")
-    database_echo: bool = Field(default=False, description="Echo SQL queries")
-    database_pool_size: int = Field(default=10, description="Database connection pool size")
-    database_max_overflow: int = Field(default=20, description="Database max overflow connections")
+    database_pool_size: int = Field(default=5, description="Database connection pool size")
+    database_max_overflow: int = Field(default=10, description="Database max overflow connections")
+    database_echo: bool = Field(default=False, description="Echo SQL queries for debugging")
+    
+    # Database URL (can be set via environment variable)
+    database_url: str = Field(default="postgresql://postgres:password@localhost:5432/neurosync", description="Database connection URL")
+    
+    # PostgreSQL specific settings (used as fallback if DATABASE_URL not provided)
+    postgres_host: str = Field(default="localhost", description="PostgreSQL host")
+    postgres_port: int = Field(default=5432, description="PostgreSQL port")
+    postgres_user: str = Field(default="postgres", description="PostgreSQL username")
+    postgres_password: str = Field(default="password", description="PostgreSQL password")
+    postgres_database: str = Field(default="neurosync", description="PostgreSQL database name")
     
     # Vector database settings
     vector_db_path: str = Field(default="./data/chroma", description="ChromaDB storage path")
     embedding_model: str = Field(default="all-MiniLM-L6-v2", description="Sentence transformer model")
     vector_db_reset: bool = Field(default=False, description="Reset vector database on startup")
+    
+    # Redis settings
+    redis_url: str = Field(default="redis://localhost:6379/0", description="Redis connection URL")
+    redis_max_connections: int = Field(default=10, description="Redis max connections")
+    redis_decode_responses: bool = Field(default=True, description="Decode Redis responses")
+    
+    # Neo4j settings (optional for knowledge graph)
+    neo4j_uri: str = Field(default="bolt://localhost:7687", description="Neo4j connection URI")
+    neo4j_user: str = Field(default="neo4j", description="Neo4j username")
+    neo4j_password: str = Field(default="password", description="Neo4j password")
     
     # AI service settings
     openai_api_key: str = Field(default="sk-test-key-replace-with-real-key", description="OpenAI API key")
@@ -103,6 +134,22 @@ class Settings(BaseSettings):
     professional_monthly_tokens: int = Field(default=220, description="Professional tier monthly tokens")
     enterprise_monthly_tokens: int = Field(default=380, description="Enterprise tier monthly tokens")
     
+    # Payment settings (Stripe)
+    stripe_publishable_key: Optional[str] = Field(default=None, description="Stripe publishable key")
+    stripe_secret_key: Optional[str] = Field(default=None, description="Stripe secret key")
+    stripe_webhook_secret: Optional[str] = Field(default=None, description="Stripe webhook secret")
+    
+    # Stripe Price IDs for subscription plans
+    stripe_starter_price_id: Optional[str] = Field(default=None, description="Stripe price ID for Starter plan")
+    stripe_professional_price_id: Optional[str] = Field(default=None, description="Stripe price ID for Professional plan")
+    stripe_enterprise_price_id: Optional[str] = Field(default=None, description="Stripe price ID for Enterprise plan")
+    
+    # Stripe Price IDs for token packs
+    stripe_small_pack_price_id: Optional[str] = Field(default=None, description="Stripe price ID for small token pack")
+    stripe_medium_pack_price_id: Optional[str] = Field(default=None, description="Stripe price ID for medium token pack")
+    stripe_large_pack_price_id: Optional[str] = Field(default=None, description="Stripe price ID for large token pack")
+    stripe_enterprise_pack_price_id: Optional[str] = Field(default=None, description="Stripe price ID for enterprise token pack")
+    
     # Email settings
     email_provider: str = Field(default="sendgrid", description="Email provider (sendgrid, ses, smtp)")
     sendgrid_api_key: Optional[str] = Field(default=None, description="SendGrid API key")
@@ -127,22 +174,12 @@ class Settings(BaseSettings):
     request_timeout: int = Field(default=300, description="Request timeout in seconds")
     embedding_batch_size: int = Field(default=50, description="Batch size for embedding generation")
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
-        
-        # Environment variable prefixes
-        env_prefix = "NEUROSYNC_"
-        
-        # Field aliases for common environment variables
-        fields = {
-            "database_url": {"env": ["DATABASE_URL", "NEUROSYNC_DATABASE_URL"]},
-            "openai_api_key": {"env": ["OPENAI_API_KEY", "NEUROSYNC_OPENAI_API_KEY"]},
-            "secret_key": {"env": ["SECRET_KEY", "NEUROSYNC_SECRET_KEY"]},
-            "redis_url": {"env": ["REDIS_URL", "NEUROSYNC_REDIS_URL"]},
-            "sentry_dsn": {"env": ["SENTRY_DSN", "NEUROSYNC_SENTRY_DSN"]},
-        }
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore"
+    )
 
     def get_database_url(self) -> str:
         """Get database URL with proper formatting"""

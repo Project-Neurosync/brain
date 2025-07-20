@@ -8,9 +8,9 @@ import {
   SearchIcon,
   RocketIcon,
   CodeIcon,
-  IntegrationsIcon,
+  PuzzleIcon,
   ShieldIcon,
-  ApiIcon,
+  Globe,
   HelpCircleIcon,
   ArrowRightIcon,
   PlayIcon,
@@ -34,7 +34,7 @@ const docSections = [
   {
     title: 'Integrations',
     description: 'Connect your tools and platforms',
-    icon: IntegrationsIcon,
+    icon: PuzzleIcon,
     color: 'bg-blue-100 text-blue-800',
     articles: [
       { title: 'GitHub Integration', description: 'Sync repositories and pull requests' },
@@ -46,7 +46,7 @@ const docSections = [
   {
     title: 'API Reference',
     description: 'Complete API documentation',
-    icon: ApiIcon,
+    icon: Globe,
     color: 'bg-purple-100 text-purple-800',
     articles: [
       { title: 'Authentication', description: 'API keys and OAuth setup' },
@@ -124,7 +124,7 @@ const quickLinks = [
   { title: 'API Status', href: '/status', icon: PlayIcon },
   { title: 'Changelog', href: '/changelog', icon: FileTextIcon },
   { title: 'Support', href: '/contact', icon: HelpCircleIcon },
-  { title: 'Community', href: '/community', icon: IntegrationsIcon }
+  { title: 'Community', href: '/community', icon: PuzzleIcon }
 ]
 
 export default function DocsPage() {
@@ -299,7 +299,7 @@ export default function DocsPage() {
               <Card className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <CodeIcon className="h-6 w-6 text-white" />
+                    <Globe className="h-6 w-6 text-white" />
                   </div>
                   <CardTitle>Code Examples</CardTitle>
                 </CardHeader>

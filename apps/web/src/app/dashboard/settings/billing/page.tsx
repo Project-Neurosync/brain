@@ -17,13 +17,14 @@ import {
 } from 'lucide-react'
 
 interface TokenUsage {
-  tokens_remaining: number
-  tokens_total: number
-  tokens_used_today: number
-  tokens_used_this_month: number
-  reset_date: string
-  current_cost: number
-  projected_monthly_cost: number
+  status: string
+  user_id: string
+  total_tokens: number
+  total_cost: number
+  quota_limit: number
+  quota_remaining: number
+  breakdown: any
+  recent_usage: any[]
 }
 
 export default function BillingSettingsPage() {
@@ -113,7 +114,7 @@ export default function BillingSettingsPage() {
                 </span>
               </div>
               <p className="text-sm text-gray-600">
-                Next billing date: {tokenUsage?.reset_date ? new Date(tokenUsage.reset_date).toLocaleDateString() : 'N/A'}
+                Usage Status: {tokenUsage?.status || 'N/A'}
               </p>
             </div>
             <Button variant="outline">
@@ -132,15 +133,15 @@ export default function BillingSettingsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {tokenUsage?.tokens_remaining?.toLocaleString() || '0'}
+              {tokenUsage?.quota_remaining?.toLocaleString() || '0'}
             </div>
             <div className="mt-2">
               <Progress 
-                value={tokenUsage ? (tokenUsage.tokens_remaining / tokenUsage.tokens_total) * 100 : 0} 
+                value={tokenUsage ? (tokenUsage.quota_remaining / tokenUsage.quota_limit) * 100 : 0} 
               />
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              of {tokenUsage?.tokens_total?.toLocaleString() || '0'} total
+              of {tokenUsage?.quota_limit?.toLocaleString() || '0'} total
             </p>
           </CardContent>
         </Card>
@@ -152,10 +153,10 @@ export default function BillingSettingsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {tokenUsage?.tokens_used_today?.toLocaleString() || '0'}
+              {tokenUsage?.total_tokens?.toLocaleString() || '0'}
             </div>
             <p className="text-xs text-muted-foreground">
-              tokens used today
+              total tokens used
             </p>
           </CardContent>
         </Card>
@@ -167,10 +168,10 @@ export default function BillingSettingsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {tokenUsage?.tokens_used_this_month?.toLocaleString() || '0'}
+              {tokenUsage?.recent_usage?.length || '0'}
             </div>
             <p className="text-xs text-muted-foreground">
-              tokens this month
+              recent queries
             </p>
           </CardContent>
         </Card>
@@ -182,10 +183,10 @@ export default function BillingSettingsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${tokenUsage?.current_cost?.toFixed(2) || '0.00'}
+              ${tokenUsage?.total_cost?.toFixed(2) || '0.00'}
             </div>
             <p className="text-xs text-muted-foreground">
-              this month
+              total cost
             </p>
           </CardContent>
         </Card>
@@ -207,7 +208,7 @@ export default function BillingSettingsPage() {
               </div>
               <div>
                 <p className="font-medium">•••• •••• •••• 4242</p>
-                <p className="text-sm text-gray-600">Expires 12/25</p>
+                <p className="text-sm text-gray-600">Quota limit: {tokenUsage?.quota_limit?.toLocaleString() || 'N/A'}</p>
               </div>
             </div>
             <Button variant="outline">

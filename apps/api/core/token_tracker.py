@@ -7,6 +7,11 @@ from typing import Dict, List, Any, Optional
 import logging
 from datetime import datetime, timedelta
 from enum import Enum
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+
+from core.token_models import User, TokenQuota, TokenUsage, TokenPack, TokenOptimization
+from services.database_service import db_service
 
 class TokenType(Enum):
     """Types of tokens that can be consumed."""
@@ -20,18 +25,31 @@ class TokenTracker:
     Tracks token usage, manages quotas, and handles billing calculations.
     """
     
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None, db_service: Optional[Any] = None):
         """Initialize the Token Tracker."""
         self.config = config or {}
         self.logger = logging.getLogger(__name__)
-        self.usage_records = {}
-        self.user_quotas = {}
+        self.db_service = db_service
+        # Remove in-memory storage - now using database
+        # self.usage_records = {}
+        # self.user_quotas = {}
         self.pricing = {
             TokenType.INPUT: 0.0015,    # per 1k tokens
             TokenType.OUTPUT: 0.002,    # per 1k tokens
             TokenType.EMBEDDING: 0.0001,  # per 1k tokens
             TokenType.SEARCH: 0.0005    # per search
         }
+        
+        # Subscription tier token quotas (monthly limits)
+        self.tier_quotas = {
+            "starter": 200,      # Starter: 200 tokens/month
+            "professional": 400, # Professional: 400 tokens/month  
+            "enterprise": 800    # Enterprise: 800 tokens/month
+        }
+    
+    def _get_quota_for_tier(self, tier: str) -> int:
+        """Get monthly token quota based on subscription tier"""
+        return self.tier_quotas.get(tier.lower(), self.tier_quotas["starter"])
     
     async def initialize(self) -> None:
         """Initialize the token tracking system."""
@@ -76,10 +94,35 @@ class TokenTracker:
             "metadata": metadata or {}
         }
         
-        # Store usage record
-        if user_id not in self.usage_records:
-            self.usage_records[user_id] = []
-        self.usage_records[user_id].append(usage_record)
+        # Store usage record in database
+        try:
+            if not self.db_service:
+                raise Exception("Database service not available")
+            
+            with self.db_service.get_db_session() as session:
+                # Create TokenUsage record
+                usage_db_record = TokenUsage(
+                    user_id=user_id,
+                    project_id=project_id,
+                    token_type=token_type.value,
+                    token_count=token_count,
+                    model_used=model_name,
+                    cost_usd=cost,
+                    complexity_level="moderate",  # Default complexity
+                    query_metadata=str(metadata or {}),
+                    created_at=timestamp
+                )
+                session.add(usage_db_record)
+                session.commit()
+                
+                # Update usage record with database ID
+                usage_record["id"] = str(usage_db_record.id)
+        except Exception as e:
+            self.logger.error(f"Failed to store usage record in database: {e}")
+            # Fallback to in-memory storage for this record
+            if user_id not in self.usage_records:
+                self.usage_records[user_id] = []
+            self.usage_records[user_id].append(usage_record)
         
         self.logger.info(f"Tracked {token_count} {token_type.value} tokens for user {user_id}, cost: ${cost:.4f}")
         
@@ -104,23 +147,56 @@ class TokenTracker:
         Returns:
             Usage summary with totals and breakdowns
         """
-        if user_id not in self.usage_records:
-            return {
-                "total_tokens": 0,
-                "total_cost": 0.0,
-                "breakdown": {},
-                "records": []
-            }
-        
-        records = self.usage_records[user_id]
-        
-        # Apply filters
-        if project_id:
-            records = [r for r in records if r["project_id"] == project_id]
-        if start_date:
-            records = [r for r in records if r["timestamp"] >= start_date]
-        if end_date:
-            records = [r for r in records if r["timestamp"] <= end_date]
+        try:
+            from services.database_service import db_service
+            with db_service.get_db_session() as session:
+                # Build query
+                query = session.query(TokenUsage).filter(TokenUsage.user_id == user_id)
+                
+                # Apply filters
+                if project_id:
+                    query = query.filter(TokenUsage.project_id == project_id)
+                if start_date:
+                    query = query.filter(TokenUsage.created_at >= start_date)
+                if end_date:
+                    query = query.filter(TokenUsage.created_at <= end_date)
+                
+                # Get records
+                db_records = query.all()
+                
+                # Convert to dict format
+                records = []
+                for db_record in db_records:
+                    records.append({
+                        "id": str(db_record.id),
+                        "user_id": db_record.user_id,
+                        "project_id": db_record.project_id,
+                        "token_type": db_record.token_type,
+                        "token_count": db_record.token_count,
+                        "model_name": db_record.model_used,
+                        "cost": db_record.cost_usd,
+                        "timestamp": db_record.created_at,
+                        "metadata": db_record.query_metadata or "{}"
+                    })
+        except Exception as e:
+            self.logger.error(f"Failed to get usage from database: {e}")
+            # Fallback to in-memory storage
+            if user_id not in self.usage_records:
+                return {
+                    "total_tokens": 0,
+                    "total_cost": 0.0,
+                    "breakdown": {},
+                    "records": []
+                }
+            records = self.usage_records[user_id]
+            
+            # Apply filters for fallback
+            if project_id:
+                records = [r for r in records if r["project_id"] == project_id]
+            if start_date:
+                records = [r for r in records if r["timestamp"] >= start_date]
+            if end_date:
+                records = [r for r in records if r["timestamp"] <= end_date]
         
         # Calculate totals
         total_tokens = sum(r["token_count"] for r in records)
@@ -143,33 +219,68 @@ class TokenTracker:
             "records": records[-50:]  # Return last 50 records
         }
     
-    async def check_quota(self, user_id: str, token_count: int) -> Dict[str, Any]:
+    async def check_quota(self, user_id: str, token_count: int, subscription_tier: str = "starter") -> Dict[str, Any]:
         """
         Check if user has sufficient quota for token usage.
         
         Args:
             user_id: User ID
             token_count: Tokens to be consumed
+            subscription_tier: User's subscription tier (starter, professional, enterprise)
             
         Returns:
             Quota check result
         """
-        user_quota = self.user_quotas.get(user_id, {"limit": 100000, "used": 0})
-        
-        # Calculate current usage
-        current_usage = await self.get_usage_summary(
-            user_id,
-            start_date=datetime.utcnow() - timedelta(days=30)
-        )
-        
-        remaining = user_quota["limit"] - current_usage["total_tokens"]
+        # Get or create user quota from database
+        with db_service.get_db_session() as session:
+            # Get user from database
+            user = session.query(User).filter(User.id == user_id).first()
+            if not user:
+                # Create new user with default subscription tier
+                user = User(
+                    id=user_id,
+                    email=f"{user_id}@example.com",  # Placeholder email
+                    name="New User",
+                    subscription_tier=subscription_tier
+                )
+                session.add(user)
+                session.commit()
+            
+            # Get or create token quota
+            quota = session.query(TokenQuota).filter(TokenQuota.user_id == user_id).first()
+            if not quota:
+                tier_quota = self._get_quota_for_tier(subscription_tier)
+                quota = TokenQuota(
+                    user_id=user_id,
+                    quota_limit=tier_quota,
+                    quota_used=0,
+                    quota_remaining=tier_quota,
+                    reset_date=datetime.utcnow() + timedelta(days=30)
+                )
+                session.add(quota)
+                session.commit()
+            
+            # Calculate current usage from database
+            current_month_start = datetime.utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            total_used = session.query(func.sum(TokenUsage.token_count)).filter(
+                TokenUsage.user_id == user_id,
+                TokenUsage.created_at >= current_month_start
+            ).scalar() or 0
+            
+            # Update quota with actual usage
+            quota.quota_used = total_used
+            quota.quota_remaining = quota.quota_limit - total_used
+            session.commit()
+            
+            remaining = quota.quota_remaining
         can_proceed = remaining >= token_count
         
         return {
             "can_proceed": can_proceed,
-            "quota_limit": user_quota["limit"],
-            "quota_used": current_usage["total_tokens"],
+            "quota_limit": quota.quota_limit,
             "quota_remaining": remaining,
+            "quota_used": quota.quota_used,
+            "message": "Sufficient quota" if can_proceed else "Insufficient quota",
             "requested_tokens": token_count
         }
     

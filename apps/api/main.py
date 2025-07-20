@@ -28,6 +28,7 @@ from core.token_tracker import TokenTracker, TokenType
 from core.auth import AuthManager
 from models.requests import *
 from models.responses import *
+from routes import admin
 from config.settings import get_settings
 
 # Configure logging
@@ -52,24 +53,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include admin routes
+app.include_router(admin.router)
+
 # Security
 security = HTTPBearer()
 settings = get_settings()
+
+# Initialize database service first
+from services.database_service import DatabaseService
+db_service = DatabaseService()
 
 # Initialize core components with proper configuration
 ai_engine = AIEngine(config={"openai_api_key": settings.openai_api_key})
 data_ingestion = DataIngestionEngine()
 vector_db = VectorDatabase()
 knowledge_graph = KnowledgeGraphBuilder()
-token_tracker = TokenTracker()
-auth_manager = AuthManager(config={"jwt_secret": settings.secret_key})
+token_tracker = TokenTracker(config={}, db_service=db_service)
+auth_manager = AuthManager(config={"jwt_secret": settings.secret_key}, db_service=db_service)
 
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
     logger.info("Starting NeuroSync AI Backend...")
     
-    # Initialize databases
+    # Initialize database service
+    from services.database_service import db_service
+    await db_service.initialize()
+    
+    # Initialize token tracker
     await token_tracker.initialize()
     
     logger.info("NeuroSync AI Backend started successfully!")
@@ -78,6 +90,10 @@ async def startup_event():
 async def shutdown_event():
     """Cleanup on shutdown"""
     logger.info("Shutting down NeuroSync AI Backend...")
+    
+    # Close database connections
+    from services.database_service import db_service
+    await db_service.close()
 
 # Authentication dependency
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -110,6 +126,7 @@ async def register_user(request: UserRegistrationRequest):
         result = await auth_manager.register_user(
             email=request.email,
             password=request.password,
+            name=request.name,
             subscription_tier=request.subscription_tier,
             metadata=request.metadata
         )
@@ -333,7 +350,9 @@ async def get_token_usage(current_user: Dict = Depends(get_current_user)):
     """Get user's token usage information"""
     try:
         usage_summary = await token_tracker.get_usage_summary(current_user["user_id"])
-        quota_check = await token_tracker.check_quota(current_user["user_id"], 0)
+        # Get user's subscription tier and check quota accordingly
+        user_tier = current_user.get("subscription_tier", "starter")
+        quota_check = await token_tracker.check_quota(current_user["user_id"], 0, user_tier)
         
         return TokenUsageResponse(
             status="success",
