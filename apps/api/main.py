@@ -371,26 +371,47 @@ async def analyze_cost_optimization(
                 searches=usage_summary["breakdown"].get("search", {}).get("cost", 0.0),
                 total=usage_summary["total_cost"]
             ),
-            projected_savings=usage_summary["total_cost"] * 0.3,  # 30% potential savings
-            optimization_score=75.0,
-            suggestions=[
-                OptimizationSuggestion(
-                    type=s["type"],
-                    message=s["message"],
-                    potential_savings=s["potential_savings"],
-                    implementation_effort="Low"
-                ) for s in suggestions
-            ]
+            optimization_suggestions=suggestions,
+            potential_savings=sum(s.get("potential_savings", 0.0) for s in suggestions)
         )
-        
     except Exception as e:
         logger.error(f"Cost optimization analysis error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Cost optimization analysis failed")
+        raise HTTPException(status_code=500, detail="Failed to analyze cost optimization")
+
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "1.0.0"
+    }
+
+
+# Root endpoint
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {"message": "NeuroSync API v1.0.0", "status": "running"}
+
+
+# Startup event
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on startup"""
+    logger.info("Starting NeuroSync API...")
+    logger.info("All services initialized successfully")
+
+
+# Shutdown event
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup on shutdown"""
+    logger.info("Shutting down NeuroSync API...")
+
 
 if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
-    )
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

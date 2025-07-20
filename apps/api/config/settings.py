@@ -5,7 +5,8 @@ Centralized configuration management using Pydantic settings
 
 import os
 from typing import Optional, List
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 class Settings(BaseSettings):
@@ -24,13 +25,13 @@ class Settings(BaseSettings):
     workers: int = Field(default=1, description="Number of worker processes")
     
     # Security settings
-    secret_key: str = Field(..., description="Secret key for JWT and encryption")
+    secret_key: str = Field(default="dev-secret-key-change-in-production", description="Secret key for JWT and encryption")
     jwt_algorithm: str = Field(default="HS256", description="JWT algorithm")
     jwt_expiration_hours: int = Field(default=24, description="JWT token expiration in hours")
     cors_origins: List[str] = Field(default=["*"], description="CORS allowed origins")
     
     # Database settings
-    database_url: str = Field(..., description="Database connection URL")
+    database_url: str = Field(default="sqlite:///./neurosync.db", description="Database connection URL")
     database_echo: bool = Field(default=False, description="Echo SQL queries")
     database_pool_size: int = Field(default=10, description="Database connection pool size")
     database_max_overflow: int = Field(default=20, description="Database max overflow connections")
@@ -41,7 +42,7 @@ class Settings(BaseSettings):
     vector_db_reset: bool = Field(default=False, description="Reset vector database on startup")
     
     # AI service settings
-    openai_api_key: str = Field(..., description="OpenAI API key")
+    openai_api_key: str = Field(default="sk-test-key-replace-with-real-key", description="OpenAI API key")
     ai_model: str = Field(default="gpt-4", description="OpenAI model to use")
     ai_temperature: float = Field(default=0.7, description="Default AI temperature")
     ai_max_tokens: int = Field(default=1000, description="Default max tokens")
