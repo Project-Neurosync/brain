@@ -1,10 +1,12 @@
 """
 NeuroSync AI Backend - Payment Service
-Stripe integration for subscriptions and token purchases
+Razorpay integration for subscriptions and token purchases
 """
 
-import stripe
+import razorpay
 import logging
+import hmac
+import hashlib
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
 from config.settings import get_settings
@@ -14,20 +16,20 @@ from services.database_service import DatabaseService
 logger = logging.getLogger(__name__)
 
 class PaymentService:
-    """Stripe payment processing service"""
+    """Razorpay payment processing service"""
     
     def __init__(self):
         self.settings = get_settings()
         self.db_service = DatabaseService()
         
-        # Initialize Stripe
-        stripe.api_key = self.settings.stripe_secret_key
-        self.webhook_secret = self.settings.stripe_webhook_secret
+        # Initialize Razorpay
+        self.client = razorpay.Client(auth=(self.settings.razorpay_key_id, self.settings.razorpay_key_secret))
+        self.webhook_secret = self.settings.razorpay_webhook_secret
         
-        # Subscription plans mapping
+        # Subscription plans mapping (amounts in paise for Razorpay)
         self.subscription_plans = {
             "starter": {
-                "price_id": self.settings.stripe_starter_price_id,
+                "amount": 1900,  # ₹19 in paise
                 "tokens": 200,
                 "price": 19.00,
                 "name": "Starter"

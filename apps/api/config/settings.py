@@ -134,21 +134,10 @@ class Settings(BaseSettings):
     professional_monthly_tokens: int = Field(default=220, description="Professional tier monthly tokens")
     enterprise_monthly_tokens: int = Field(default=380, description="Enterprise tier monthly tokens")
     
-    # Payment settings (Stripe)
-    stripe_publishable_key: Optional[str] = Field(default=None, description="Stripe publishable key")
-    stripe_secret_key: Optional[str] = Field(default=None, description="Stripe secret key")
-    stripe_webhook_secret: Optional[str] = Field(default=None, description="Stripe webhook secret")
-    
-    # Stripe Price IDs for subscription plans
-    stripe_starter_price_id: Optional[str] = Field(default=None, description="Stripe price ID for Starter plan")
-    stripe_professional_price_id: Optional[str] = Field(default=None, description="Stripe price ID for Professional plan")
-    stripe_enterprise_price_id: Optional[str] = Field(default=None, description="Stripe price ID for Enterprise plan")
-    
-    # Stripe Price IDs for token packs
-    stripe_small_pack_price_id: Optional[str] = Field(default=None, description="Stripe price ID for small token pack")
-    stripe_medium_pack_price_id: Optional[str] = Field(default=None, description="Stripe price ID for medium token pack")
-    stripe_large_pack_price_id: Optional[str] = Field(default=None, description="Stripe price ID for large token pack")
-    stripe_enterprise_pack_price_id: Optional[str] = Field(default=None, description="Stripe price ID for enterprise token pack")
+    # Payment settings (Razorpay)
+    razorpay_key_id: Optional[str] = Field(default="rzp_test_key", description="Razorpay key ID")
+    razorpay_key_secret: Optional[str] = Field(default="rzp_test_secret", description="Razorpay key secret")
+    razorpay_webhook_secret: Optional[str] = Field(default="webhook_secret", description="Razorpay webhook secret")
     
     # Email settings
     email_provider: str = Field(default="sendgrid", description="Email provider (sendgrid, ses, smtp)")
