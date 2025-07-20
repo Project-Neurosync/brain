@@ -1,19 +1,32 @@
-# NeuroSync - Comprehensive .gitignore
+# NeuroSync Project - Comprehensive .gitignore
+# Monorepo with Python FastAPI backend and Next.js frontend
 
-# Environment variables
+# =============================================================================
+# ENVIRONMENT & SECRETS
+# =============================================================================
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-apps/api/.env
-apps/web/.env.local
+.env.*
+*.env
+config.json
+secrets.json
 
-# Python
+# =============================================================================
+# PYTHON BACKEND (FastAPI)
+# =============================================================================
+
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# C extensions
 *.so
+
+# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -27,58 +40,269 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 
-# Virtual environments
-venv/
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff (if used)
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff (if used)
+instance/
+.webassets-cache
+
+# Scrapy stuff (if used)
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.venv
 env/
+venv/
 ENV/
 env.bak/
 venv.bak/
-apps/api/venv/
-apps/api/env/
 
-# Node.js
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# =============================================================================
+# NODE.JS / NEXT.JS FRONTEND
+# =============================================================================
+
+# Dependencies
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 lerna-debug.log*
-apps/web/node_modules/
-apps/web/.next/
-apps/web/out/
-apps/web/.nuxt/
-apps/web/dist/
 
-# Next.js
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
 .next/
 out/
-.vercel/
 
-# Database
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# =============================================================================
+# DATABASE & STORAGE
+# =============================================================================
+
+# SQLite databases
 *.db
 *.sqlite
 *.sqlite3
+
+# PostgreSQL
+*.pgsql
+
+# Redis dumps
+dump.rdb
+
+# Vector database storage
 chroma_db/
-vector_store/
+vector_storage/
+embeddings/
 
-# Logs
-logs/
+# File uploads
+uploads/
+media/
+static/files/
+
+# =============================================================================
+# AI & ML MODELS
+# =============================================================================
+
+# Model files
+*.pkl
+*.joblib
+*.h5
+*.hdf5
+*.pb
+*.onnx
+*.tflite
+
+# Training data
+data/
+datasets/
+training_data/
+
+# Model checkpoints
+checkpoints/
+models/
+*.pth
+*.pt
+
+# =============================================================================
+# LOGS & MONITORING
+# =============================================================================
+
+# Log files
 *.log
-apps/api/logs/
-apps/web/logs/
+logs/
+log/
 
-# IDE
+# Monitoring data
+prometheus_data/
+grafana_data/
+
+# =============================================================================
+# DEVELOPMENT TOOLS
+# =============================================================================
+
+# IDEs and editors
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -87,55 +311,74 @@ apps/web/logs/
 ehthumbs.db
 Thumbs.db
 
-# Temporary files
-*.tmp
-*.temp
-temp/
-tmp/
-
-# Build artifacts
-build/
-dist/
-*.tgz
-*.tar.gz
-
-# Coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
-
-# Documentation builds
-docs/_build/
-site/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
 # Backup files
 *.bak
 *.backup
+*.orig
 
-# Local development
-local/
-.local/
+# =============================================================================
+# DOCKER & DEPLOYMENT
+# =============================================================================
 
-# Old directories (from restructuring)
-frontend/
+# Docker
+.dockerignore
+docker-compose.override.yml
 
-# API keys and secrets (extra safety)
-**/secrets/
-**/*secret*
-**/*key*
-**/*token*
-!**/package.json
-!**/requirements.txt
+# Kubernetes
+*.kubeconfig
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# =============================================================================
+# TESTING & CI/CD
+# =============================================================================
+
+# Test results
+test-results/
+test_results/
+.coverage
+coverage.xml
+junit.xml
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# =============================================================================
+# TEMPORARY & CACHE FILES
+# =============================================================================
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Cache directories
+.cache/
+cache/
+
+# Lock files (keep package-lock.json and yarn.lock for reproducible builds)
+# package-lock.json  # Uncomment if you want to ignore
+# yarn.lock          # Uncomment if you want to ignore
+
+# =============================================================================
+# PROJECT SPECIFIC
+# =============================================================================
+
+# NeuroSync specific
+neurosync_data/
+knowledge_graphs/
+ingested_data/
+
+# API documentation generated files
+docs/build/
+docs/dist/
+
+# Backup configurations
+config_backup/
+settings_backup/
