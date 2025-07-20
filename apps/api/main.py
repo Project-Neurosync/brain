@@ -29,6 +29,10 @@ from core.auth import AuthManager
 from models.requests import *
 from models.responses import *
 from routes import admin
+from routes import integrations
+from routes import ml_intelligence_routes
+from routes import search_routes
+from routes import payments
 from config.settings import get_settings
 
 # Configure logging
@@ -55,6 +59,13 @@ app.add_middleware(
 
 # Include admin routes
 app.include_router(admin.router)
+
+# Include integration routes
+app.include_router(integrations.router)
+
+# Include WebSocket routes
+from routes import websocket_routes
+app.include_router(websocket_routes.router)
 
 # Security
 security = HTTPBearer()
@@ -85,6 +96,13 @@ async def startup_event():
     await token_tracker.initialize()
     
     logger.info("NeuroSync AI Backend started successfully!")
+
+# Register routers
+app.include_router(admin.router)
+app.include_router(integrations.router)
+app.include_router(ml_intelligence_routes.router)
+app.include_router(search_routes.router)
+app.include_router(payments.router)
 
 @app.on_event("shutdown")
 async def shutdown_event():

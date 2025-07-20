@@ -51,42 +51,6 @@ const integrations = [
     features: ['Page sync', 'Wiki import', 'Version history', 'Content search'],
     status: 'Available',
     color: 'bg-blue-500 text-white'
-  },
-  {
-    name: 'Google Calendar',
-    description: 'Sync meeting notes, schedules, and team availability',
-    icon: CalendarIcon,
-    category: 'Productivity',
-    features: ['Meeting sync', 'Schedule import', 'Availability', 'Notes capture'],
-    status: 'Coming Soon',
-    color: 'bg-green-600 text-white'
-  },
-  {
-    name: 'Notion',
-    description: 'Import pages, databases, and structured content',
-    icon: DatabaseIcon,
-    category: 'Documentation',
-    features: ['Page import', 'Database sync', 'Template sync', 'Content structure'],
-    status: 'Coming Soon',
-    color: 'bg-gray-800 text-white'
-  },
-  {
-    name: 'Microsoft Teams',
-    description: 'Connect chat history, meetings, and file sharing',
-    icon: MessageSquareIcon,
-    category: 'Communication',
-    features: ['Chat sync', 'Meeting notes', 'File sharing', 'Team channels'],
-    status: 'Coming Soon',
-    color: 'bg-blue-700 text-white'
-  },
-  {
-    name: 'Linear',
-    description: 'Sync issues, projects, and development workflows',
-    icon: ZapIcon,
-    category: 'Project Management',
-    features: ['Issue sync', 'Project data', 'Workflow tracking', 'Team insights'],
-    status: 'Coming Soon',
-    color: 'bg-purple-700 text-white'
   }
 ]
 
