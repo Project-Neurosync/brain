@@ -12,15 +12,38 @@
     "build:web": "cd apps/web && npm run build",
     "start": "npm run start:web",
     "start:web": "cd apps/web && npm run start",
-    "lint": "npm run lint:web",
+    "lint": "npm run lint:web && npm run lint:api",
     "lint:web": "cd apps/web && npm run lint",
-    "test": "npm run test:web",
+    "lint:api": "cd apps/api && python -m flake8 . --max-line-length=120",
+    "format": "npm run format:web && npm run format:api",
+    "format:web": "cd apps/web && prettier --write .",
+    "format:api": "cd apps/api && python -m black . --line-length=120",
+    "test": "npm run test:web && npm run test:api",
     "test:web": "cd apps/web && npm run test",
+    "test:api": "cd apps/api && python -m pytest",
     "install:all": "npm install && cd apps/web && npm install && cd ../api && pip install -r requirements.txt",
-    "clean": "rm -rf node_modules apps/web/node_modules apps/web/.next"
+    "install:python": "cd apps/api && pip install -r requirements.txt",
+    "install:web": "cd apps/web && npm install",
+    "clean": "rm -rf node_modules apps/web/node_modules apps/web/.next",
+    "clean:all": "npm run clean && cd apps/api && rm -rf __pycache__ .pytest_cache",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "migrate": "cd apps/api && python migrations/add_user_fields.py",
+    "db:reset": "cd apps/api && python scripts/reset_db.py"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "cross-env": "^7.0.3"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.2",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.0"
   },
   "engines": {
     "node": ">=18.0.0",
