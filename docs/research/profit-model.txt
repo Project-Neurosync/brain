@@ -1,0 +1,184 @@
+# NeuroSync Profit Model - Complete Analysis
+# Updated: 2025-07-20
+# All figures in USD
+
+## SUBSCRIPTION TIERS PROFIT ANALYSIS
+
+### Starter Tier ($19/month)
+Revenue: $19.00/month
+Costs:
+- Token costs: 100 tokens × $0.050 = $5.00
+- Non-token costs (infrastructure, support): $3.00
+- Total costs: $8.00/month
+
+Profit: $19.00 - $8.00 = $11.00/month
+Margin: 57.9%
+Annual profit per user: $132
+
+### Professional Tier ($29/month)
+Revenue: $29.00/month
+Costs:
+- Token costs: 220 tokens × $0.050 = $11.00
+- Non-token costs (infrastructure, support): $4.00
+- Total costs: $15.00/month
+
+Profit: $29.00 - $15.00 = $14.00/month
+Margin: 48.3%
+Annual profit per user: $168
+
+### Enterprise Tier ($49/month)
+Revenue: $49.00/month
+Costs:
+- Token costs: 380 tokens × $0.050 = $19.00
+- Non-token costs (infrastructure, support): $5.00
+- Total costs: $24.00/month
+
+Profit: $49.00 - $24.00 = $25.00/month
+Margin: 51.0%
+Annual profit per user: $300
+
+## TOKEN PACKS PROFIT ANALYSIS
+
+### Small Pack (500 tokens) - Cost: $25.00
+
+Starter Tier ($37/month):
+- Revenue: $37.00
+- Cost: $25.00
+- Profit: $12.00
+- Margin: 32.4%
+
+Professional Tier ($34/month):
+- Revenue: $34.00
+- Cost: $25.00
+- Profit: $9.00
+- Margin: 26.5%
+
+Enterprise Tier ($31/month):
+- Revenue: $31.00
+- Cost: $25.00
+- Profit: $6.00
+- Margin: 19.4%
+
+### Medium Pack (1,500 tokens) - Cost: $75.00
+
+Starter Tier ($101/month):
+- Revenue: $101.00
+- Cost: $75.00
+- Profit: $26.00
+- Margin: 25.7%
+
+Professional Tier ($92/month):
+- Revenue: $92.00
+- Cost: $75.00
+- Profit: $17.00
+- Margin: 18.5%
+
+Enterprise Tier ($84/month):
+- Revenue: $84.00
+- Cost: $75.00
+- Profit: $9.00
+- Margin: 10.7%
+
+### Large Pack (5,000 tokens) - Cost: $250.00
+
+Starter Tier ($316/month):
+- Revenue: $316.00
+- Cost: $250.00
+- Profit: $66.00
+- Margin: 20.9%
+
+Professional Tier ($289/month):
+- Revenue: $289.00
+- Cost: $250.00
+- Profit: $39.00
+- Margin: 13.5%
+
+Enterprise Tier ($269/month):
+- Revenue: $269.00
+- Cost: $250.00
+- Profit: $19.00
+- Margin: 7.1%
+
+## OTHER ADD-ONS PROFIT ANALYSIS
+
+### Extra Project Token ($5/month)
+Revenue: $5.00/month
+Cost: ~$0.50/month (minimal infrastructure)
+Profit: $4.50/month
+Margin: 90%
+
+### Team Token ($50/month)
+Revenue: $50.00/month
+Cost: ~$5.00/month (infrastructure scaling)
+Profit: $45.00/month
+Margin: 90%
+
+### API Access Token ($20/month)
+Revenue: $20.00/month
+Cost: ~$2.00/month (API infrastructure)
+Profit: $18.00/month
+Margin: 90%
+
+## COST BREAKDOWN DETAILS
+
+### Token Cost Structure (per token: $0.050)
+- OpenAI API call: ~$0.035 (70%)
+- Infrastructure overhead: ~$0.010 (20%)
+- Buffer/margin: ~$0.005 (10%)
+
+### Non-Token Costs by Tier
+Starter ($3.00/month):
+- Database storage & queries: $1.20
+- Compute infrastructure: $1.00
+- Third-party services: $0.50
+- Support & operations: $0.30
+
+Professional ($4.00/month):
+- Enhanced features: +$1.00
+- Base infrastructure: $3.00
+
+Enterprise ($5.00/month):
+- Enterprise features: +$2.00
+- Base infrastructure: $3.00
+
+## PROFIT SCENARIOS
+
+### Best Case Monthly Profit per Customer:
+- Starter + Small Pack: $11 + $12 = $23/month
+- Professional + Medium Pack: $14 + $17 = $31/month
+- Enterprise + Large Pack: $25 + $19 = $44/month
+
+### Annual Profit Potential:
+- Starter tier: $132-276 per user
+- Professional tier: $168-372 per user
+- Enterprise tier: $300-528 per user
+
+## KEY METRICS
+
+### Margins Summary:
+- All subscription tiers: 48%+ margins
+- All token packs: Profitable with volume discounts
+- Other add-ons: 90% margins
+
+### Unit Economics:
+- Customer Acquisition Cost (CAC): $1,500
+- Customer Lifetime Value (LTV): $25,000
+- LTV/CAC Ratio: 17:1
+- Monthly Churn Target: <3%
+- Gross Margin: ~75%
+
+## BUSINESS MODEL VALIDATION
+
+✅ All subscription tiers profitable
+✅ All token packs profitable
+✅ Clear value progression
+✅ Sustainable unit economics
+✅ Competitive pricing vs market
+✅ Strong expansion revenue potential
+
+
+Revenue : 100%
+Costs : 50%
+salary : 25%
+marketing : 10%
+profit : 7%

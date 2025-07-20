@@ -1,0 +1,47 @@
+{
+  "name": "neurosync",
+  "version": "1.0.0",
+  "description": "NeuroSync - AI-Powered Developer Knowledge Transfer Platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "cd apps/api && python main.py",
+    "dev:web": "cd apps/web && npm run dev",
+    "build": "npm run build:web",
+    "build:web": "cd apps/web && npm run build",
+    "start": "npm run start:web",
+    "start:web": "cd apps/web && npm run start",
+    "lint": "npm run lint:web",
+    "lint:web": "cd apps/web && npm run lint",
+    "test": "npm run test:web",
+    "test:web": "cd apps/web && npm run test",
+    "install:all": "npm install && cd apps/web && npm install && cd ../api && pip install -r requirements.txt",
+    "clean": "rm -rf node_modules apps/web/node_modules apps/web/.next"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "python": ">=3.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/neurosync.git"
+  },
+  "keywords": [
+    "ai",
+    "knowledge-transfer",
+    "developer-tools",
+    "fastapi",
+    "nextjs",
+    "vector-database",
+    "openai"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
