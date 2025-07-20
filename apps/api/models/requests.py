@@ -3,84 +3,196 @@ NeuroSync AI Backend - Request Models
 Pydantic models for API requests
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional, Dict, List, Any
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, Dict, List, Any, Union
+from enum import Enum
 from datetime import datetime
 
+class SourceType(str, Enum):
+    """Data source types."""
+    GITHUB = "github"
+    JIRA = "jira"
+    SLACK = "slack"
+    DOCUMENT = "document"
+    MEETING = "meeting"
+    MANUAL = "manual"
+
+class SubscriptionTier(str, Enum):
+    """Subscription tiers."""
+    STARTER = "starter"
+    PROFESSIONAL = "professional"
+    ENTERPRISE = "enterprise"
+
+# Authentication Models
+class UserRegistrationRequest(BaseModel):
+    """User registration request."""
+    email: EmailStr
+    password: str = Field(..., min_length=8)
+    name: Optional[str] = Field(None, description="User's full name")
+    subscription_tier: SubscriptionTier = SubscriptionTier.STARTER
+    metadata: Optional[Dict[str, Any]] = None
+
+class UserLoginRequest(BaseModel):
+    """User login request."""
+    email: EmailStr
+    password: str
+
+class RefreshTokenRequest(BaseModel):
+    """Refresh token request."""
+    refresh_token: str
+
+# Data Ingestion Models
+class GitHubIngestionConfig(BaseModel):
+    """GitHub repository ingestion configuration."""
+    repo_url: str
+    branch: Optional[str] = "main"
+    include_issues: bool = True
+    include_prs: bool = True
+    include_wiki: bool = False
+    file_extensions: Optional[List[str]] = None
+
+class JiraIngestionConfig(BaseModel):
+    """Jira project ingestion configuration."""
+    server_url: str
+    project_key: str
+    username: str
+    api_token: str
+    include_comments: bool = True
+    max_issues: Optional[int] = 1000
+
+class SlackIngestionConfig(BaseModel):
+    """Slack channel ingestion configuration."""
+    workspace_id: str
+    channel_id: str
+    bot_token: str
+    days_back: int = 30
+    include_threads: bool = True
+
+class DocumentIngestionConfig(BaseModel):
+    """Document ingestion configuration."""
+    file_paths: List[str]
+    file_type: Optional[str] = None
+    extract_metadata: bool = True
+
 class DataIngestionRequest(BaseModel):
-    """Request model for data ingestion"""
-    source_type: str = Field(..., description="Type of data source (github, jira, slack, etc.)")
-    data: Dict[str, Any] = Field(..., description="Raw data to be processed")
-    project_id: str = Field(..., description="Project ID to associate data with")
-    metadata: Optional[Dict[str, Any]] = Field(default={}, description="Additional metadata")
-    
-    class Config:
-        schema_extra = {
-            "example": {
-                "source_type": "github",
-                "data": {
-                    "repository_url": "https://github.com/user/repo",
-                    "commits": [],
-                    "issues": [],
-                    "pull_requests": []
-                },
-                "project_id": "proj_123",
-                "metadata": {
-                    "branch": "main",
-                    "last_sync": "2024-01-01T00:00:00Z"
-                }
-            }
-        }
+    """Data ingestion request."""
+    project_id: str
+    source_type: SourceType
+    config: Union[GitHubIngestionConfig, JiraIngestionConfig, SlackIngestionConfig, DocumentIngestionConfig]
+    metadata: Optional[Dict[str, Any]] = None
 
-class QueryRequest(BaseModel):
-    """Request model for AI queries"""
-    query: str = Field(..., description="User's question or query")
-    project_id: str = Field(..., description="Project context for the query")
-    context: Optional[Dict[str, Any]] = Field(default={}, description="Additional context")
-    max_tokens: Optional[int] = Field(default=1000, description="Maximum tokens for response")
-    temperature: Optional[float] = Field(default=0.7, description="AI temperature setting")
-    
-    class Config:
-        schema_extra = {
-            "example": {
-                "query": "How does the authentication system work in this project?",
-                "project_id": "proj_123",
-                "context": {
-                    "file_path": "src/auth.py",
-                    "line_number": 45
-                },
-                "max_tokens": 1000,
-                "temperature": 0.7
-            }
-        }
+# AI Query Models
+class AIQueryRequest(BaseModel):
+    """AI query request."""
+    query: str = Field(..., min_length=1, max_length=2000)
+    project_id: str
+    context: Optional[Dict[str, Any]] = None
+    stream: bool = False
+    max_tokens: Optional[int] = None
+    temperature: Optional[float] = Field(None, ge=0.0, le=2.0)
 
+class EmbeddingRequest(BaseModel):
+    """Embedding generation request."""
+    texts: List[str] = Field(..., min_items=1, max_items=100)
+    project_id: str
+
+# Project Management Models
 class CreateProjectRequest(BaseModel):
-    """Request model for creating a new project"""
-    name: str = Field(..., description="Project name")
-    description: Optional[str] = Field(default="", description="Project description")
-    settings: Optional[Dict[str, Any]] = Field(default={}, description="Project settings")
-    integrations: Optional[List[str]] = Field(default=[], description="Enabled integrations")
-    
-    class Config:
-        schema_extra = {
-            "example": {
-                "name": "My Awesome Project",
-                "description": "A revolutionary web application",
-                "settings": {
-                    "ai_model": "gpt-4",
-                    "embedding_model": "text-embedding-ada-002",
-                    "max_context_length": 4000
-                },
-                "integrations": ["github", "jira", "slack"]
-            }
-        }
+    """Create project request."""
+    name: str = Field(..., min_length=1, max_length=100)
+    description: Optional[str] = None
+    settings: Optional[Dict[str, Any]] = None
 
 class UpdateProjectRequest(BaseModel):
-    """Request model for updating a project"""
-    name: Optional[str] = Field(default=None, description="Updated project name")
-    description: Optional[str] = Field(default=None, description="Updated description")
-    settings: Optional[Dict[str, Any]] = Field(default=None, description="Updated settings")
-    integrations: Optional[List[str]] = Field(default=None, description="Updated integrations")
+    """Update project request."""
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    description: Optional[str] = None
+    settings: Optional[Dict[str, Any]] = None
+
+class InviteUserRequest(BaseModel):
+    """Invite user to project request."""
+    email: EmailStr
+    role: str = "member"
+
+# Vector Search Models
+class VectorSearchRequest(BaseModel):
+    """Vector search request."""
+    query: str = Field(..., min_length=1)
+    project_id: str
+    limit: int = Field(10, ge=1, le=100)
+    filters: Optional[Dict[str, Any]] = None
+
+class VectorUpsertRequest(BaseModel):
+    """Vector upsert request."""
+    project_id: str
+    documents: List[Dict[str, Any]]
+    metadata: Optional[Dict[str, Any]] = None
+
+# Analytics Models
+class AnalyticsRequest(BaseModel):
+    """Analytics request."""
+    project_id: Optional[str] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    metrics: Optional[List[str]] = None
+
+# Cost Optimization Models
+class OptimizationAnalysisRequest(BaseModel):
+    """Cost optimization analysis request."""
+    user_id: Optional[str] = None
+    project_id: Optional[str] = None
+    time_period_days: int = Field(30, ge=1, le=365)
+
+class ModelRecommendationRequest(BaseModel):
+    """Model recommendation request."""
+    query: str
+    context_size: Optional[int] = None
+    user_tier: Optional[SubscriptionTier] = None
+
+# Knowledge Graph Models
+class EntityCreationRequest(BaseModel):
+    """Entity creation request."""
+    project_id: str
+    entity_type: str
+    properties: Dict[str, Any]
+    relationships: Optional[List[Dict[str, Any]]] = None
+
+class RelationshipCreationRequest(BaseModel):
+    """Relationship creation request."""
+    source_id: str
+    target_id: str
+    relationship_type: str
+    properties: Optional[Dict[str, Any]] = None
+
+class GraphQueryRequest(BaseModel):
+    """Knowledge graph query request."""
+    project_id: str
+    entity_id: Optional[str] = None
+    relationship_types: Optional[List[str]] = None
+    max_depth: int = Field(2, ge=1, le=5)
+
+# File Upload Models
+class FileUploadRequest(BaseModel):
+    """File upload request."""
+    project_id: str
+    file_name: str
+    file_type: str
+    file_size: int
+    metadata: Optional[Dict[str, Any]] = None
+
+# Integration Models
+class IntegrationConnectionRequest(BaseModel):
+    """Integration connection request."""
+    project_id: str
+    integration_type: str
+    config: Dict[str, Any]
+    enabled: bool = True
+
+class IntegrationSyncRequest(BaseModel):
+    """Integration sync request."""
+    project_id: str
+    integration_id: str
+    full_sync: bool = False
 
 class AddTeamMemberRequest(BaseModel):
     """Request model for adding team members to a project"""

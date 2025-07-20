@@ -267,14 +267,14 @@ We use a **per-user subscription** with **project limits** plus **token-based ex
 
 ## 💰 Funding Requirements
 
-### **Seed Round: $115,000 (6-Month Runway)**
+### **Seed Round: $70k (6-Month Runway)**
 
 #### **Use of Funds:**
-- **Personnel** (60%): $69K - 2 founders + 1 contractor
-- **Infrastructure** (15%): $17K - AWS, AI models, tools
-- **Marketing** (15%): $17K - Content, ads, conferences
-- **Legal & Compliance** (5%): $6K - SOC2, contracts
-- **Operations** (5%): $6K - Office, misc expenses
+- **Personnel** (60%): $30k - 2 hires + intern
+- **Infrastructure** (15%): $15k - AWS, Pinecone, OpenAI
+- **Marketing** (15%): $15k - Content, ads, conferences
+- **Admin** (5%): $5k - Admin
+- **Misc** (5%): $5k - Office, misc expenses
 
 #### **Milestones (6 Months):**
 - **50+ paying customers**

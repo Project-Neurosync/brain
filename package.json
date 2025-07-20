@@ -3,13 +3,10 @@
   "version": "1.0.0",
   "description": "NeuroSync - AI-Powered Developer Knowledge Transfer Platform",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+
   "scripts": {
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
-    "dev:api": "cd apps/api && python main.py",
+    "dev:api": "cd apps/api && py -m uvicorn main:app --reload --host 0.0.0.0 --port 8000",
     "dev:web": "cd apps/web && npm run dev",
     "build": "npm run build:web",
     "build:web": "cd apps/web && npm run build",

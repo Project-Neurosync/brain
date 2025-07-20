@@ -125,15 +125,134 @@ We use a **per-user subscription** with **project limits** plus **token-based ex
 
 ## 📊 Financial Projections & Growth
 
-### **5-Year Revenue Projections:**
+### 📊 5-Year Revenue Projections
 
-| Year | Customers | Avg Revenue/Customer | Total Revenue | Operating Costs | Net Profit | Margin |
-|------|-----------|---------------------|---------------|-----------------|------------|--------|
-| **Y1** | 50 | $4,800 | **$240K** | $144K | **$96K** | **40%** |
-| **Y2** | 120 | $6,500 | **$780K** | $300K | **$480K** | **62%** |
-| **Y3** | 250 | $8,000 | **$2.0M** | $600K | **$1.4M** | **70%** |
-| **Y4** | 400 | $10,000 | **$4.0M** | $1.2M | **$2.8M** | **70%** |
-| **Y5** | 600 | $12,000 | **$7.2M** | $2.0M | **$5.2M** | **72%** |
+### **Detailed Revenue Breakdown by Year:**
+
+| Year | Total Users | Starter ($19) | Pro ($29) | Enterprise ($49) | Subscription ARR | Token Pack Revenue | Total ARR | Operating Costs | Net Profit | Margin |
+|------|-------------|---------------|-----------|------------------|------------------|-------------------|-----------|-----------------|------------|--------|
+| **Y1** | 250 | 150 users | 80 users | 20 users | **$71K** | **$2.5K** | **$73.5K** | $50K | **$23.5K** | **32%** |
+| **Y2** | 500 | 250 users | 200 users | 50 users | **$151.2K** | **$11.3K** | **$162.5K** | $90K | **$72.5K** | **45%** |
+| **Y3** | 1,000 | 400 users | 450 users | 150 users | **$334.8K** | **$40K** | **$374.8K** | $140K | **$234.8K** | **63%** |
+| **Y4** | 2,000 | 700 users | 900 users | 400 users | **$745.2K** | **$108K** | **$853.2K** | $250K | **$603.2K** | **71%** |
+| **Y5** | 3,500 | 1,200 users | 1,500 users | 800 users | **$1.42M** | **$263K** | **$1.68M** | $400K | **$1.28M** | **76%** |
+
+### **Operating Cost Breakdown by Year:**
+
+#### **Year 1 Operating Costs: $40K**
+- **Personnel (60%)**: $24K
+  - 2 founders (part-time equivalent): $20K
+  - 1 contractor (part-time): $4K
+- **Infrastructure (20%)**: $8K
+  - AWS/Cloud hosting: $3K
+  - OpenAI API costs: $2K
+  - Database (Supabase): $1K
+  - Other SaaS tools: $2K
+- **Marketing & Sales (15%)**: $6K
+  - Content marketing: $3K
+  - Paid advertising: $2K
+  - Conference/events: $1K
+- **Legal & Compliance (3%)**: $1.2K
+  - Legal fees: $800
+  - Compliance tools: $400
+- **Operations (2%)**: $0.8K
+  - Office/misc expenses: $800
+
+#### **Year 2 Operating Costs: $80K**
+- **Personnel (65%)**: $52K
+  - 2 founders (full-time): $40K
+  - 1 full-time developer: $12K
+- **Infrastructure (18%)**: $14.4K
+  - Scaling cloud costs: $8K
+  - AI API costs: $4K
+  - Enhanced tooling: $2.4K
+- **Marketing & Sales (12%)**: $9.6K
+  - Content + paid ads: $6K
+  - Sales tools: $2K
+  - Events/conferences: $1.6K
+- **Legal & Compliance (3%)**: $2.4K
+- **Operations (2%)**: $1.6K
+
+#### **Year 3 Operating Costs: $123K**
+- **Personnel (70%)**: $86.1K
+  - 3 full-time team members: $75K
+  - Contractors/freelancers: $11.1K
+- **Infrastructure (15%)**: $18.5K
+  - Production-grade infrastructure: $12K
+  - AI/ML costs: $6.5K
+- **Marketing & Sales (10%)**: $12.3K
+- **Legal & Compliance (3%)**: $3.7K
+- **Operations (2%)**: $2.5K
+
+#### **Year 4 Operating Costs: $227K**
+- **Personnel (75%)**: $170.3K
+  - 5 full-time employees: $150K
+  - Benefits and contractors: $20.3K
+- **Infrastructure (12%)**: $27.2K
+  - Enterprise infrastructure: $20K
+  - AI costs at scale: $7.2K
+- **Marketing & Sales (8%)**: $18.2K
+- **Legal & Compliance (3%)**: $6.8K
+- **Operations (2%)**: $4.5K
+
+#### **Year 5 Operating Costs: $336K**
+- **Personnel (78%)**: $262.1K
+  - 8 full-time employees: $240K
+  - Benefits, equity, contractors: $22.1K
+- **Infrastructure (10%)**: $33.6K
+  - Scaled infrastructure: $25K
+  - AI costs: $8.6K
+- **Marketing & Sales (7%)**: $23.5K
+- **Legal & Compliance (3%)**: $10.1K
+- **Operations (2%)**: $6.7K
+
+### **Cost Efficiency Metrics:**
+- **Cost per User**: $267 (Y1) → $134 (Y5) - 50% improvement
+- **Personnel as % of Revenue**: 35% (Y1) → 16% (Y5) - Scaling efficiency
+- **Infrastructure Costs**: Scale with usage but optimize over time
+- **Customer Acquisition Cost**: $150 average across all years
+
+### **Revenue Mix Analysis:**
+
+#### **Year 1 (Launch Year):**
+- **Subscription Revenue**: $252K (77%)
+  - Starter: 100 users × $228/year = $22.8K
+  - Professional: 40 users × $348/year = $13.9K
+  - Enterprise: 10 users × $588/year = $5.9K
+- **Token Pack Revenue**: $75K (23%)
+- **Average Revenue Per User**: $2,180
+
+#### **Year 2 (Growth Phase):**
+- **Subscription Revenue**: $750K (71%)
+  - Starter: 200 users × $228/year = $45.6K
+  - Professional: 150 users × $348/year = $52.2K
+  - Enterprise: 50 users × $588/year = $29.4K
+- **Token Pack Revenue**: $300K (29%)
+- **Average Revenue Per User**: $2,625
+
+#### **Year 3 (Scale Phase):**
+- **Subscription Revenue**: $1.64M (67%)
+  - Starter: 300 users × $228/year = $68.4K
+  - Professional: 350 users × $348/year = $121.8K
+  - Enterprise: 150 users × $588/year = $88.2K
+- **Token Pack Revenue**: $820K (33%)
+- **Average Revenue Per User**: $3,075
+
+#### **Year 4 (Enterprise Focus):**
+- **Subscription Revenue**: $3.36M (67%)
+  - Starter: 500 users × $228/year = $114K
+  - Professional: 700 users × $348/year = $243.6K
+  - Enterprise: 300 users × $588/year = $176.4K
+- **Token Pack Revenue**: $1.68M (33%)
+- **Average Revenue Per User**: $3,360
+
+#### **Year 5 (Market Leadership):**
+- **Subscription Revenue**: $6.12M (67%)
+  - Starter: 800 users × $228/year = $182.4K
+  - Professional: 1,200 users × $348/year = $417.6K
+  - Enterprise: 500 users × $588/year = $294K
+- **Token Pack Revenue**: $3.06M (33%)
+- **Average Revenue Per User**: $3,672
 
 ### **Key Metrics:**
 - **Gross Margin**: 76-84% (subscription) + 73-88% (token packs)
@@ -267,14 +386,15 @@ We use a **per-user subscription** with **project limits** plus **token-based ex
 
 ## 💰 Funding Requirements
 
-### **Seed Round: $115,000 (6-Month Runway)**
+## 💰 Funding Requirements : Total: $110,000
 
-#### **Use of Funds:**
-- **Personnel** (60%): $69K - 2 founders + 1 contractor
-- **Infrastructure** (15%): $17K - AWS, AI models, tools
-- **Marketing** (15%): $17K - Content, ads, conferences
-- **Legal & Compliance** (5%): $6K - SOC2, contracts
-- **Operations** (5%): $6K - Office, misc expenses
+| Category           | Amount   | % of Total | Description                              |
+| ------------------ | -------- | ---------- | ---------------------------------------- |
+| **Personnel**      | \$50,000 | **45.45%** | 3 hires + 1 intern                       |
+| **Infrastructure** | \$15,000 | **13.64%** | AWS, Pinecone, OpenAI                    |
+| **Marketing**      | \$20,000 | **18.18%** | Content, ads, conferences                |
+| **Admin**          | \$5,000  | **4.55%**  | Admin                                    |
+| **Misc**           | \$20,000 | **18.18%** | Office setup, hardware, unexpected costs |
 
 #### **Milestones (6 Months):**
 - **50+ paying customers**
@@ -282,7 +402,6 @@ We use a **per-user subscription** with **project limits** plus **token-based ex
 - **Product-market fit validation**
 - **SOC2 Type I compliance**
 - **Series A preparation**
-
 ---
 
 ## 👥 Team & Execution

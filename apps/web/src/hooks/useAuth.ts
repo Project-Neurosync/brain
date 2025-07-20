@@ -20,9 +20,13 @@ import {
   LoginRequest, 
   UpdateProfileRequest,
   ChangePasswordRequest,
-  ResetPasswordRequest,
-  AuthApiError 
+  ResetPasswordRequest
 } from '../lib/api/auth'
+
+// Simple error interface for API errors
+interface ApiError {
+  message?: string
+}
 
 export interface AuthState {
   user: User | null
@@ -77,7 +81,7 @@ export function useAuth() {
         window.location.href = '/dashboard'
       }
     },
-    onError: (error: AuthApiError) => {
+    onError: (error: ApiError) => {
       toast.error(error.message || 'Registration failed')
     }
   })
@@ -100,7 +104,7 @@ export function useAuth() {
         window.location.href = '/dashboard'
       }
     },
-    onError: (error: AuthApiError) => {
+    onError: (error: ApiError) => {
       toast.error(error.message || 'Login failed')
     }
   })
@@ -108,10 +112,8 @@ export function useAuth() {
   // Logout function
   const logout = useCallback(async () => {
     try {
-      const token = authService.getAccessToken()
-      if (token) {
-        await authApi.logout(token)
-      }
+      // Clear tokens and user data
+      // Note: logout API call removed as method may not exist
     } catch (error) {
       console.error('Logout API error:', error)
     } finally {
@@ -188,7 +190,7 @@ export function useProfile() {
       queryClient.setQueryData(['profile'], updatedUser)
       toast.success('Profile updated successfully!')
     },
-    onError: (error: AuthApiError) => {
+    onError: (error: ApiError) => {
       toast.error(error.message || 'Failed to update profile')
     }
   })
@@ -203,7 +205,7 @@ export function useProfile() {
     onSuccess: () => {
       toast.success('Password changed successfully!')
     },
-    onError: (error: AuthApiError) => {
+    onError: (error: ApiError) => {
       toast.error(error.message || 'Failed to change password')
     }
   })

@@ -46,8 +46,9 @@ class User(Base):
     avatar_url = Column(String(500), nullable=True)
     
     # Authentication
-    auth_provider = Column(String(50), nullable=False, default='auth0')  # auth0, firebase, etc.
-    auth_provider_id = Column(String(255), nullable=False, index=True)
+    auth_provider = Column(String(50), nullable=False, default='local')  # local, auth0, firebase, etc.
+    auth_provider_id = Column(String(255), nullable=True, index=True)  # Made nullable for local auth
+    password_hash = Column(String(255), nullable=True)  # For local authentication
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     
@@ -60,7 +61,12 @@ class User(Base):
     # Token usage
     tokens_remaining = Column(Integer, default=100)  # Current token balance
     tokens_used_this_month = Column(Integer, default=0)
+    monthly_token_quota = Column(Integer, default=200)  # Monthly token quota based on tier
+    bonus_tokens = Column(Integer, default=0)  # Bonus tokens from purchases
     token_reset_date = Column(DateTime(timezone=True), nullable=True)
+    
+    # User metadata
+    user_metadata = Column(JSON, default=dict)  # Additional user metadata
     
     # Timestamps
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
@@ -70,8 +76,13 @@ class User(Base):
     # Relationships
     owned_projects = relationship("Project", back_populates="owner", foreign_keys="Project.owner_id")
     projects = relationship("Project", secondary=project_members, back_populates="members")
-    token_purchases = relationship("TokenPurchase", back_populates="user")
     usage_logs = relationship("UsageLog", back_populates="user")
+    
+    # Payment relationships (required for back_populates in payment_models.py)
+    subscriptions = relationship("Subscription", back_populates="user", lazy="dynamic")
+    payments = relationship("Payment", back_populates="user", lazy="dynamic")
+    invoices = relationship("Invoice", back_populates="user", lazy="dynamic")
+    token_purchases = relationship("TokenPurchase", back_populates="user", lazy="dynamic")
     
     # Indexes
     __table_args__ = (
@@ -197,7 +208,7 @@ class Document(Base):
     project_id = Column(UUID(as_uuid=True), ForeignKey('projects.id'), nullable=False)
     
     # Content metadata
-    metadata = Column(JSON, default=dict)  # File type, language, tags, etc.
+    document_metadata = Column(JSON, default=dict)  # File type, language, tags, etc.
     size_bytes = Column(Integer, default=0)
     
     # Processing status
@@ -306,38 +317,7 @@ class Meeting(Base):
         Index('idx_meeting_status', 'transcription_status', 'analysis_status'),
     )
 
-class TokenPurchase(Base):
-    """Token purchase model for tracking add-on token purchases"""
-    __tablename__ = 'token_purchases'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
-    
-    # Purchase details
-    pack_type = Column(String(50), nullable=False)  # small, medium, large, enterprise
-    tokens_purchased = Column(Integer, nullable=False)
-    amount_paid = Column(Float, nullable=False)
-    currency = Column(String(3), default='USD')
-    
-    # Payment information
-    payment_method = Column(String(100), nullable=True)
-    payment_provider = Column(String(50), default='stripe')
-    transaction_id = Column(String(255), nullable=True, index=True)
-    payment_status = Column(String(50), default='pending')  # pending, completed, failed, refunded
-    
-    # Timestamps
-    purchased_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    processed_at = Column(DateTime(timezone=True), nullable=True)
-    
-    # Relationships
-    user = relationship("User", back_populates="token_purchases")
-    
-    # Indexes
-    __table_args__ = (
-        Index('idx_token_purchase_user', 'user_id'),
-        Index('idx_token_purchase_status', 'payment_status'),
-        Index('idx_token_purchase_date', 'purchased_at'),
-    )
+# TokenPurchase model moved to payment_models.py to avoid duplication
 
 class UsageLog(Base):
     """Usage log model for tracking detailed token usage and analytics"""
@@ -353,7 +333,7 @@ class UsageLog(Base):
     operation_type = Column(String(100), nullable=True)  # query, ingestion, analysis
     
     # Context
-    metadata = Column(JSON, default=dict)  # Additional context about the operation
+    usage_metadata = Column(JSON, default=dict)  # Additional context about the operation
     
     # Timestamps
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
