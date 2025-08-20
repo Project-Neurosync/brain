@@ -740,3 +740,73 @@ async def get_integration(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to retrieve integration: {str(e)}"
         )
+
+
+@router.get("/{integration_id}/sync-status")
+async def get_integration_sync_status(
+    integration_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Get sync status for a specific integration
+    Handles cases where frontend incorrectly uses project ID as integration ID
+    """
+    try:
+        # Get the integration
+        integration = db.query(Integration).filter(
+            Integration.id == integration_id,
+            Integration.user_id == current_user.id
+        ).first()
+        
+        if not integration:
+            # Check if this is actually a project ID being used incorrectly
+            project = db.query(Project).filter(
+                Project.id == integration_id,
+                Project.user_id == current_user.id
+            ).first()
+            
+            if project:
+                # Return a default response for project ID used as integration ID
+                return {
+                    "integration_id": integration_id,
+                    "status": "no_integrations",
+                    "last_sync": None,
+                    "last_sync_status": "not_applicable",
+                    "is_syncing": False,
+                    "progress": 0,
+                    "error_message": "This is a project ID, not an integration ID"
+                }
+            else:
+                # Neither integration nor project found
+                return {
+                    "integration_id": integration_id,
+                    "status": "not_found",
+                    "last_sync": None,
+                    "last_sync_status": "not_applicable",
+                    "is_syncing": False,
+                    "progress": 0,
+                    "error_message": "No integration found with this ID"
+                }
+        
+        return {
+            "integration_id": integration.id,
+            "status": integration.status or "idle",
+            "last_sync": integration.last_sync,
+            "last_sync_status": integration.last_sync_status or "completed",
+            "is_syncing": False,  # For now, we'll assume no active syncing
+            "progress": 100,  # Default to completed
+            "error_message": integration.error_message
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting sync status for integration {integration_id}: {str(e)}")
+        return {
+            "integration_id": integration_id,
+            "status": "error",
+            "last_sync": None,
+            "last_sync_status": "error",
+            "is_syncing": False,
+            "progress": 0,
+            "error_message": f"Failed to get sync status: {str(e)}"
+        }

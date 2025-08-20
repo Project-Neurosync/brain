@@ -23,6 +23,8 @@ import {
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useIntegrations, useIntegrationSync } from '../../hooks/useIntegrations'
+import { useQuery } from '@tanstack/react-query'
+import { filesApi } from '../../lib/api/files'
 
 interface SyncStatus {
   id: string
@@ -48,6 +50,24 @@ export function DataSyncStatus({ projectId }: DataSyncStatusProps) {
   const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null)
   
   const { integrations } = useIntegrations(projectId)
+  
+  // Fetch project documents to show actual document count
+  const { data: projectFiles, isLoading: filesLoading, error: filesError } = useQuery({
+    queryKey: ['project-files', projectId],
+    queryFn: async () => {
+      console.log('Fetching project files for project:', projectId)
+      const result = await filesApi.getProjectFiles(projectId)
+      console.log('Project files result:', result)
+      return result
+    },
+    enabled: !!projectId,
+    staleTime: 30000, // 30 seconds
+  })
+  
+  // Log any errors
+  if (filesError) {
+    console.error('Error fetching project files:', filesError)
+  }
   const { syncIntegration, isSyncing } = useIntegrationSync(projectId)
 
   // Fetch real-time sync statuses using polling
@@ -219,12 +239,12 @@ export function DataSyncStatus({ projectId }: DataSyncStatusProps) {
         <div className="bg-white p-6 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Items</p>
+              <p className="text-sm font-medium text-gray-600">Total Documents</p>
               <p className="text-2xl font-bold text-gray-900">
-                {syncStatuses.reduce((sum, s) => sum + s.items_synced, 0).toLocaleString()}
+                {filesLoading ? '...' : (projectFiles?.data?.total_files || 0)}
               </p>
             </div>
-            <TrendingUp className="h-8 w-8 text-gray-500" />
+            <FileText className="h-8 w-8 text-gray-500" />
           </div>
         </div>
       </div>

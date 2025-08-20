@@ -299,14 +299,30 @@ async def get_project_files(
                 detail="Project not found or access denied"
             )
         
-        # In a full implementation, this would query the documents table
-        # For now, return a placeholder response
+        # Query documents from the database
+        documents = db.query(Document).filter(
+            Document.project_id == project_id
+        ).all()
+        
+        # Format documents for frontend
+        files = []
+        for doc in documents:
+            files.append({
+                'id': str(doc.id),
+                'filename': doc.filename,
+                'file_type': doc.file_type,
+                'file_size': doc.file_size,
+                'upload_date': doc.created_at.isoformat() if doc.created_at else None,
+                'status': 'processed',
+                'content_preview': doc.content[:200] + '...' if doc.content and len(doc.content) > 200 else doc.content
+            })
+        
         return {
             'project_id': project_id,
             'project_name': project.name,
-            'files': [],
-            'total_files': 0,
-            'message': 'File listing not yet implemented - files are processed and stored in vector database'
+            'files': files,
+            'total_files': len(files),
+            'message': f'Found {len(files)} documents in project'
         }
         
     except HTTPException:
