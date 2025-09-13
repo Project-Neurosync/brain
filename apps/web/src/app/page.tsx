@@ -119,7 +119,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav className="relative z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
+      <nav className="relative z-50 bg-black/60 backdrop-blur-sm border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <motion.div 
@@ -128,10 +128,12 @@ export default function HomePage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
-                <Brain className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold gradient-text">NeuroSync</span>
+              <img 
+                src="/images/cerebryx.svg" 
+                alt="Cerebryx Logo" 
+                className="h-12 w-auto"
+              />
+
             </motion.div>
 
             <motion.div 
@@ -140,13 +142,13 @@ export default function HomePage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <Link href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <Link href="#features" className="text-gray-300 hover:text-white transition-colors">
                 Features
               </Link>
-              <Link href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <Link href="#pricing" className="text-gray-300 hover:text-white transition-colors">
                 Pricing
               </Link>
-              <Link href="/docs" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <Link href="/docs" className="text-gray-300 hover:text-white transition-colors">
                 Docs
               </Link>
               <Link href="/login" className="btn-secondary">
@@ -161,7 +163,7 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
+      <section className="relative overflow-hidden bg-gradient-to-br from-black via-gray-950 to-gray-900">
         <div className="absolute inset-0 bg-gradient-mesh opacity-5"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
@@ -175,7 +177,7 @@ export default function HomePage() {
               variants={fadeInUp}
               className="mb-8"
             >
-              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary-100 text-primary-800 mb-6">
+              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary-900/30 text-primary-200 mb-6">
                 <Star className="w-4 h-4 mr-2" />
                 Your Project's Second Brain
               </span>
@@ -183,7 +185,7 @@ export default function HomePage() {
 
             <motion.h1 
               variants={fadeInUp}
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6"
+              className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-100 mb-6"
             >
               AI-Powered{' '}
               <span className="text-gradient-primary">
@@ -193,10 +195,10 @@ export default function HomePage() {
 
             <motion.p 
               variants={fadeInUp}
-              className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
+              className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
             >
               If you're onboarding new devs, handing off projects, or managing big codebases — 
-              <span className="font-semibold text-gray-900"> NeuroSync is your project's second brain</span>
+              <span className="font-semibold text-white"> Cerebryx is your project's second brain</span>
             </motion.p>
 
             <motion.div 
@@ -214,7 +216,7 @@ export default function HomePage() {
 
             <motion.div 
               variants={fadeInUp}
-              className="text-sm text-gray-500"
+              className="text-sm text-gray-400"
             >
               ✨ No credit card required • 14-day free trial • Setup in 5 minutes
             </motion.div>
@@ -223,7 +225,7 @@ export default function HomePage() {
       </section>
 
       {/* Personas Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="text-center mb-16"
@@ -232,10 +234,10 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-4">
               For Visual Minds of All Kinds
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Whether you're a developer, researcher, or team lead, NeuroSync adapts to your workflow
             </p>
           </motion.div>
@@ -253,9 +255,9 @@ export default function HomePage() {
                 <div className={`w-16 h-16 bg-gradient-to-r ${persona.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6`}>
                   <persona.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{persona.title}</h3>
-                <h4 className="text-lg font-medium text-primary-600 mb-3">{persona.subtitle}</h4>
-                <p className="text-gray-600">{persona.description}</p>
+                <h3 className="text-xl font-semibold text-gray-100 mb-2">{persona.title}</h3>
+                <h4 className="text-lg font-medium text-primary-400 mb-3">{persona.subtitle}</h4>
+                <p className="text-gray-300">{persona.description}</p>
               </motion.div>
             ))}
           </div>
@@ -263,7 +265,7 @@ export default function HomePage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -272,10 +274,10 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Why NeuroSync?
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-6">
+                Why Cerebryx?
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="text-xl text-gray-300 mb-8">
                 Context never gets lost. Every decision, update, and discussion always accessible.
               </p>
               
@@ -290,7 +292,7 @@ export default function HomePage() {
                     viewport={{ once: true }}
                   >
                     <CheckCircle className="w-6 h-6 text-success-500 flex-shrink-0" />
-                    <span className="text-gray-700">{benefit}</span>
+                    <span className="text-gray-300">{benefit}</span>
                   </motion.div>
                 ))}
               </div>
@@ -303,29 +305,29 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+              <div className="bg-gray-950 rounded-2xl shadow-xl p-8 border border-gray-800">
                 <div className="flex items-center space-x-4 mb-6">
                   <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
                     <MessageSquare className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">All repos, Jira updates, and chats</h3>
-                    <p className="text-gray-600 text-sm">synced in one living AI knowledge hub</p>
+                    <h3 className="font-semibold text-gray-100">All repos, Jira updates, and chats</h3>
+                    <p className="text-gray-400 text-sm">synced in one living AI knowledge hub</p>
                   </div>
                 </div>
                 
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <Github className="w-5 h-5 text-gray-600" />
-                    <span className="text-sm text-gray-700">GitHub repositories synced</span>
+                  <div className="flex items-center space-x-3 p-3 bg-gray-900 rounded-lg">
+                    <Github className="w-5 h-5 text-gray-300" />
+                    <span className="text-sm text-gray-300">GitHub repositories synced</span>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <FileText className="w-5 h-5 text-gray-600" />
-                    <span className="text-sm text-gray-700">Jira tickets integrated</span>
+                  <div className="flex items-center space-x-3 p-3 bg-gray-900 rounded-lg">
+                    <FileText className="w-5 h-5 text-gray-300" />
+                    <span className="text-sm text-gray-300">Jira tickets integrated</span>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <MessageSquare className="w-5 h-5 text-gray-600" />
-                    <span className="text-sm text-gray-700">Slack conversations indexed</span>
+                  <div className="flex items-center space-x-3 p-3 bg-gray-900 rounded-lg">
+                    <MessageSquare className="w-5 h-5 text-gray-300" />
+                    <span className="text-sm text-gray-300">Slack conversations indexed</span>
                   </div>
                 </div>
               </div>
@@ -335,7 +337,7 @@ export default function HomePage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-24 bg-white">
+      <section id="pricing" className="py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="text-center mb-16"
@@ -344,10 +346,10 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-4">
               Pricing
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Simple, transparent pricing for teams of all sizes
             </p>
           </motion.div>
@@ -355,7 +357,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Starter Tier */}
             <motion.div
-              className="pricing-card relative"
+              className="pricing-card relative card"
               variants={fadeInUp}
             >
               <div className="absolute -top-4 left-6">
@@ -364,28 +366,28 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Starter</h3>
-                <p className="text-gray-600 mb-6">Perfect for small teams</p>
+                <h3 className="text-2xl font-bold text-gray-100 mb-2">Starter</h3>
+                <p className="text-gray-400 mb-6">Perfect for small teams</p>
                 <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$19</span>
-                  <span className="text-gray-600">/user/month</span>
+                  <span className="text-4xl font-bold text-gray-100">$19</span>
+                  <span className="text-gray-400">/user/month</span>
                 </div>
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">3 projects per user</span>
+                    <span className="text-gray-300">3 projects per user</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">5 users max per project</span>
+                    <span className="text-gray-300">5 users max per project</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">200 AI tokens per user</span>
+                    <span className="text-gray-300">200 AI tokens per user</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">Basic integrations</span>
+                    <span className="text-gray-300">Basic integrations</span>
                   </li>
                 </ul>
                 <button className="btn-primary w-full">
@@ -396,7 +398,7 @@ export default function HomePage() {
 
             {/* Professional Tier */}
             <motion.div
-              className="pricing-card relative border-2 border-primary-500"
+              className="pricing-card relative border-2 border-primary-500 bg-gray-950 rounded-2xl"
               variants={fadeInUp}
             >
               <div className="absolute -top-4 left-6">
@@ -405,32 +407,32 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Professional</h3>
-                <p className="text-gray-600 mb-6">Best for growing teams</p>
+                <h3 className="text-2xl font-bold text-gray-100 mb-2">Professional</h3>
+                <p className="text-gray-400 mb-6">Best for growing teams</p>
                 <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$29</span>
-                  <span className="text-gray-600">/user/month</span>
+                  <span className="text-4xl font-bold text-gray-100">$29</span>
+                  <span className="text-gray-400">/user/month</span>
                 </div>
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">5 projects per user</span>
+                    <span className="text-gray-300">5 projects per user</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">15 users max per project</span>
+                    <span className="text-gray-300">15 users max per project</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">400 AI tokens per user</span>
+                    <span className="text-gray-300">400 AI tokens per user</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">Advanced integrations</span>
+                    <span className="text-gray-300">Advanced integrations</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">Priority support</span>
+                    <span className="text-gray-300">Priority support</span>
                   </li>
                 </ul>
                 <button className="btn-primary w-full">
@@ -441,36 +443,36 @@ export default function HomePage() {
 
             {/* Enterprise Tier */}
             <motion.div
-              className="pricing-card relative"
+              className="pricing-card relative card"
               variants={fadeInUp}
             >
               <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
-                <p className="text-gray-600 mb-6">For large organizations</p>
+                <h3 className="text-2xl font-bold text-gray-100 mb-2">Enterprise</h3>
+                <p className="text-gray-400 mb-6">For large organizations</p>
                 <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$49</span>
-                  <span className="text-gray-600">/user/month</span>
+                  <span className="text-4xl font-bold text-gray-100">$49</span>
+                  <span className="text-gray-400">/user/month</span>
                 </div>
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">Unlimited projects</span>
+                    <span className="text-gray-300">Unlimited projects</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">50 users max per project</span>
+                    <span className="text-gray-300">50 users max per project</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">800 AI tokens per user</span>
+                    <span className="text-gray-300">800 AI tokens per user</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">All integrations</span>
+                    <span className="text-gray-300">All integrations</span>
                   </li>
                   <li className="flex items-center">
                     <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">Dedicated support</span>
+                    <span className="text-gray-300">Dedicated support</span>
                   </li>
                 </ul>
                 <button className="btn-primary w-full">
@@ -483,7 +485,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-white">
+      <section id="features" className="py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="text-center mb-16"
@@ -492,10 +494,10 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-4">
               Powerful Features
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Everything you need to transform how your team shares and discovers knowledge
             </p>
           </motion.div>
@@ -513,8 +515,8 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center mb-4">
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-lg font-semibold text-gray-100 mb-2">{feature.title}</h3>
+                <p className="text-gray-300">{feature.description}</p>
               </motion.div>
             ))}
           </div>

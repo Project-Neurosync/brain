@@ -1,4 +1,4 @@
-// File: C:\Users\moksh\CascadeProjects\brain\apps\web\src\app\page.tsx
+// File: C:\Users\100acress.com\Documents\GitHub\brain\apps\web\src\app\page.tsx
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

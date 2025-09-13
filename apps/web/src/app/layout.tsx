@@ -64,10 +64,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full dark">
       <body className={`${inter.className} h-full antialiased`}>
         <Providers>
-          <div className="min-h-full bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
+          <div className="min-h-full bg-gradient-to-br from-black via-gray-950 to-gray-900">
             {children}
           </div>
           <Toaster
@@ -75,9 +75,9 @@ export default function RootLayout({
             toastOptions={{
               duration: 4000,
               style: {
-                background: '#1e293b',
-                color: '#f8fafc',
-                border: '1px solid #334155',
+                background: '#0b0b0b',
+                color: '#e5e7eb',
+                border: '1px solid #1f2937',
                 borderRadius: '12px',
                 fontSize: '14px',
                 padding: '12px 16px',
@@ -85,13 +85,13 @@ export default function RootLayout({
               success: {
                 iconTheme: {
                   primary: '#22c55e',
-                  secondary: '#f8fafc',
+                  secondary: '#0b0b0b',
                 },
               },
               error: {
                 iconTheme: {
                   primary: '#ef4444',
-                  secondary: '#f8fafc',
+                  secondary: '#0b0b0b',
                 },
               },
             }}
